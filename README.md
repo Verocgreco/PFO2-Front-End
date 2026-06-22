@@ -2,10 +2,10 @@
 
 ##  Datos del estudiante
 
-- Nombre: [Tu nombre aquí]
-- Carrera: [Tu carrera aquí]
-- Materia: [Nombre de la materia]
-- Comisión: [Si aplica]
+- Nombre: Verónica Greco
+- Carrera: Tecnicatura en Desarrollo de Software
+- Materia: Desarrollo de Sistemas Web (Front End)
+- Comisión: D
 - Fecha: Junio 2026
 
 ---
@@ -13,7 +13,7 @@
 ##  Deploy del proyecto
 
 🔗 Link al proyecto unificado en Vercel:  
-[https://tu-proyecto.vercel.app](https://tu-proyecto.vercel.app)
+[Ver proyecto en línea](https://pfo-2-front-end.vercel.app/)
 
 Este enlace dirige a la **portada principal**, desde donde se accede a:
 
@@ -66,7 +66,7 @@ Recursos educativos. Cada tarjeta debe contener: Ícono Título Descripción
 5. Tabla Periódica Completa. Crear una representación visual completa de la tabla periódica con los 118 elementos químicos oficiales. 
 Requisitos: * Incluir todos los elementos desde Hidrógeno (H) hasta Oganesón (Og). * Cada elemento debe mostrar:
 * Número atómico * Símbolo * Nombre * Organizar los elementos respetando la estructura real de la tabla periódica. 
-*Diferenciar visualmente las categorías mediante colores distintos. Categorías sugeridas: * Metales alcalinos 
+*Diferenciar visualmente las categorías mediante colores distintos. Categorías sugeridas: * Metales alcalinos
 * Metales alcalinotérreos * Metales de transición * Metales post-transición * Metaloides * No metales * Halógenos 
 * Gases nobles * Lantánidos * Actínidos 
 Agregar interactividad mediante JavaScript: * Efecto hover sobre elementos * Mostrar información adicional al pasar el cursor o hacer clic: * Masa atómica * Grupo * Período * Categoría 
