@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Landing page educativa e interactiva sobre la tabla periódica y los 118 elementos químicos oficiales.">
+  <title>Tabla periódica | Periodic Explorer</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #071013;
+      --surface: #0d1f24;
+      --surface-2: #122c31;
+      --text: #eef8f8;
+      --muted: #a9c4c7;
+      --line: rgba(217, 249, 250, 0.16);
+      --brand: #36d1dc;
+      --accent: #9ee493;
+      --warning: #ffd166;
+      --shadow: 0 18px 42px rgba(0, 0, 0, 0.28);
+      --radius: 8px;
+      --alkali: #f97373;
+      --alkaline: #f6ad55;
+      --transition: #4fd1c5;
+      --post-transition: #63b3ed;
+      --metalloid: #b5e48c;
+      --nonmetal: #f6e05e;
+      --halogen: #d6bcfa;
+      --noble: #90cdf4;
+      --lanthanide: #f687b3;
+      --actinide: #c084fc;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 18% 8%, rgba(54, 209, 220, 0.18), transparent 28rem),
+        radial-gradient(circle at 82% 16%, rgba(158, 228, 147, 0.12), transparent 24rem),
+        linear-gradient(180deg, #071013 0%, #0a171b 48%, #061114 100%);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.6;
+    }
+
+    body.menu-open {
+      overflow: hidden;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img, svg {
+      max-width: 100%;
+    }
+
+    .container {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      border-bottom: 1px solid var(--line);
+      background: rgba(7, 16, 19, 0.84);
+      backdrop-filter: blur(18px);
+    }
+
+    .nav-wrap {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 900;
+      font-size: clamp(1rem, 4vw, 1.18rem);
+      letter-spacing: 0;
+    }
+
+    .logo-mark {
+      width: 46px;
+      height: 46px;
+      flex: 0 0 46px;
+      border: 1px solid rgba(54, 209, 220, 0.44);
+      border-radius: 8px;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(158, 228, 147, 0.22), transparent 32%),
+        linear-gradient(135deg, rgba(54, 209, 220, 0.3), rgba(14, 35, 40, 0.92));
+      box-shadow: inset 0 0 24px rgba(54, 209, 220, 0.18), 0 10px 28px rgba(54, 209, 220, 0.14);
+      color: var(--text);
+    }
+
+    .logo-mark svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .logo-text {
+      display: grid;
+      line-height: 1.05;
+    }
+
+    .logo-text small {
+      color: var(--accent);
+      font-size: 0.64rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .menu-toggle {
+      width: 44px;
+      height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+    }
+
+    .menu-toggle span,
+    .menu-toggle span::before,
+    .menu-toggle span::after {
+      content: "";
+      width: 20px;
+      height: 2px;
+      display: block;
+      background: currentColor;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    .menu-toggle span::before {
+      transform: translateY(-7px);
+    }
+
+    .menu-toggle span::after {
+      transform: translateY(5px);
+    }
+
+    .menu-open .menu-toggle span {
+      transform: rotate(45deg);
+    }
+
+    .menu-open .menu-toggle span::before {
+      opacity: 0;
+    }
+
+    .menu-open .menu-toggle span::after {
+      transform: translateY(-2px) rotate(-90deg);
+    }
+
+    .nav-links {
+      position: fixed;
+      inset: 72px 0 auto 0;
+      display: none;
+      padding: 18px 16px 24px;
+      background: rgba(7, 16, 19, 0.97);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .menu-open .nav-links {
+      display: grid;
+      gap: 6px;
+    }
+
+    .nav-links a {
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      border-radius: 8px;
+      color: var(--muted);
+      font-weight: 700;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .nav-links a:hover,
+    .nav-links a:focus-visible {
+      background: rgba(54, 209, 220, 0.12);
+      color: var(--text);
+      outline: none;
+    }
+
+    section {
+      padding: 72px 0;
+    }
+
+    .hero {
+      min-height: calc(100vh - 72px);
+      display: grid;
+      align-items: center;
+      padding: 48px 0 36px;
+      overflow: hidden;
+    }
+
+    .hero-grid {
+      display: grid;
+      gap: 34px;
+      align-items: center;
+    }
+
+    .hero h1 {
+      margin: 0;
+      max-width: 900px;
+      font-size: clamp(2.35rem, 9vw, 5.25rem);
+      line-height: 1;
+    }
+
+    .hero p {
+      max-width: 660px;
+      margin: 22px 0 0;
+      color: var(--muted);
+      font-size: clamp(1rem, 3.5vw, 1.2rem);
+    }
+
+    .cta-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 30px;
+    }
+
+    .btn {
+      min-height: 48px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 0 18px;
+      border: 0;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--brand), var(--accent));
+      color: #061114;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 14px 30px rgba(54, 209, 220, 0.22);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .btn:hover,
+    .btn:focus-visible {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 38px rgba(54, 209, 220, 0.34);
+      outline: none;
+    }
+
+    .hero-visual {
+      min-height: 360px;
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background:
+        linear-gradient(120deg, rgba(54, 209, 220, 0.08), rgba(158, 228, 147, 0.06)),
+        rgba(13, 31, 36, 0.72);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .orbit {
+      position: absolute;
+      inset: 44px;
+      border: 1px solid rgba(54, 209, 220, 0.22);
+      border-radius: 50%;
+      animation: spin 18s linear infinite;
+    }
+
+    .orbit:nth-child(2) {
+      inset: 78px 28px;
+      animation-duration: 26s;
+      transform: rotate(62deg);
+    }
+
+    .orbit:nth-child(3) {
+      inset: 28px 96px;
+      animation-duration: 22s;
+      transform: rotate(-36deg);
+    }
+
+    .electron {
+      width: 12px;
+      height: 12px;
+      position: absolute;
+      top: 12%;
+      left: 50%;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 26px var(--accent);
+    }
+
+    .nucleus {
+      position: absolute;
+      inset: 50%;
+      width: 116px;
+      height: 116px;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: #071013;
+      font-size: 2rem;
+      font-weight: 900;
+      background: radial-gradient(circle, var(--accent), var(--brand));
+      box-shadow: 0 0 44px rgba(54, 209, 220, 0.46);
+    }
+
+    .formula {
+      position: absolute;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(7, 16, 19, 0.72);
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .formula.one {
+      top: 22px;
+      left: 20px;
+    }
+
+    .formula.two {
+      right: 20px;
+      bottom: 22px;
+    }
+
+    .section-head {
+      max-width: 780px;
+      margin-bottom: 30px;
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--accent);
+      font-weight: 800;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(1.9rem, 7vw, 3rem);
+      line-height: 1.1;
+    }
+
+    .lead {
+      color: var(--muted);
+      font-size: 1.05rem;
+    }
+
+    .about-grid,
+    .contact-grid {
+      display: grid;
+      gap: 22px;
+    }
+
+    .info-panel,
+    .contact-panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(13, 31, 36, 0.72);
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .stat {
+      padding: 16px;
+      border-radius: 8px;
+      background: rgba(54, 209, 220, 0.08);
+      border: 1px solid var(--line);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 1.65rem;
+      color: var(--brand);
+      line-height: 1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .feature-grid,
+    .testimonial-grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .feature-card,
+    .testimonial {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(13, 31, 36, 0.78);
+      padding: 22px;
+      transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .feature-card:hover,
+    .testimonial:hover {
+      transform: translateY(-4px);
+      border-color: rgba(54, 209, 220, 0.5);
+      background: rgba(18, 44, 49, 0.9);
+    }
+
+    .icon {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: rgba(54, 209, 220, 0.12);
+      border: 1px solid rgba(54, 209, 220, 0.28);
+      color: var(--brand);
+      font-size: 1.4rem;
+    }
+
+    .feature-card h3,
+    .testimonial h3 {
+      margin: 16px 0 8px;
+      font-size: 1.12rem;
+    }
+
+    .feature-card p,
+    .testimonial p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .table-section {
+      background: rgba(255, 255, 255, 0.015);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .table-shell {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(7, 16, 19, 0.58);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .table-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+      padding: 14px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(13, 31, 36, 0.82);
+    }
+
+    .table-toolbar p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .legend {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 14px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .swatch {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      background: var(--c);
+    }
+
+    .periodic-scroll {
+      overflow-x: auto;
+      padding: 14px;
+    }
+
+    .periodic-table {
+      min-width: 1080px;
+      display: grid;
+      grid-template-columns: repeat(18, minmax(54px, 1fr));
+      grid-template-rows: repeat(10, 72px);
+      gap: 5px;
+    }
+
+    .element {
+      position: relative;
+      display: grid;
+      grid-template-rows: 16px 1fr 16px;
+      min-width: 0;
+      padding: 5px;
+      border: 1px solid color-mix(in srgb, var(--cat-color) 70%, white 10%);
+      border-radius: 6px;
+      background: linear-gradient(145deg, color-mix(in srgb, var(--cat-color) 23%, #071013 77%), rgba(7, 16, 19, 0.78));
+      color: var(--text);
+      cursor: pointer;
+      text-align: left;
+      transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .element:hover,
+    .element:focus-visible,
+    .element.active {
+      transform: translateY(-3px) scale(1.03);
+      z-index: 4;
+      border-color: var(--cat-color);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28), 0 0 0 2px color-mix(in srgb, var(--cat-color) 45%, transparent);
+      outline: none;
+    }
+
+    .atomic-number {
+      color: rgba(238, 248, 248, 0.76);
+      font-size: 0.66rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .symbol {
+      align-self: center;
+      font-size: clamp(1rem, 1.7vw, 1.55rem);
+      font-weight: 900;
+      line-height: 1;
+      text-align: center;
+    }
+
+    .name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: rgba(238, 248, 248, 0.82);
+      font-size: 0.62rem;
+      line-height: 1;
+      text-align: center;
+    }
+
+    .details {
+      display: none;
+      position: fixed;
+      left: 16px;
+      right: 16px;
+      bottom: 16px;
+      z-index: 70;
+      max-width: 420px;
+      padding: 16px;
+      border: 1px solid rgba(54, 209, 220, 0.36);
+      border-radius: 8px;
+      background: rgba(7, 16, 19, 0.95);
+      box-shadow: var(--shadow);
+    }
+
+    .details.visible {
+      display: block;
+      animation: rise 0.18s ease both;
+    }
+
+    .details h3 {
+      margin: 0 0 10px;
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .details h3 span {
+      color: var(--brand);
+      font-size: 1.75rem;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .detail-grid div {
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.035);
+    }
+
+    .detail-grid strong {
+      display: block;
+      color: var(--muted);
+      font-size: 0.75rem;
+    }
+
+    .detail-grid span {
+      font-weight: 800;
+    }
+
+    .testimonial cite {
+      display: block;
+      margin-top: 14px;
+      color: var(--accent);
+      font-style: normal;
+      font-weight: 800;
+    }
+
+    form {
+      display: grid;
+      gap: 14px;
+    }
+
+    label {
+      display: grid;
+      gap: 7px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(7, 16, 19, 0.7);
+      color: var(--text);
+      padding: 13px 14px;
+      font: inherit;
+    }
+
+    textarea {
+      min-height: 132px;
+      resize: vertical;
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: var(--brand);
+      outline: 3px solid rgba(54, 209, 220, 0.16);
+    }
+
+    .form-note {
+      min-height: 24px;
+      margin: 0;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .site-footer {
+      border-top: 1px solid var(--line);
+      padding: 30px 0;
+      background: #061114;
+    }
+
+    .footer-grid {
+      display: grid;
+      gap: 18px;
+      align-items: center;
+    }
+
+    .socials {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .socials a {
+      min-width: 44px;
+      min-height: 44px;
+      display: inline-grid;
+      place-items: center;
+      padding: 0 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--muted);
+      font-weight: 800;
+      transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .socials a:hover,
+    .socials a:focus-visible {
+      color: var(--text);
+      border-color: var(--brand);
+      background: rgba(54, 209, 220, 0.1);
+      outline: none;
+    }
+
+    .socials svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
+    @keyframes spin {
+      to {
+        rotate: 360deg;
+      }
+    }
+
+    @keyframes rise {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (min-width: 720px) {
+      .hero-grid,
+      .about-grid,
+      .contact-grid {
+        grid-template-columns: 1.05fr 0.95fr;
+      }
+
+      .feature-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .testimonial-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr auto;
+      }
+
+      .details {
+        left: auto;
+        right: 22px;
+      }
+    }
+
+    @media (min-width: 940px) {
+      .menu-toggle {
+        display: none;
+      }
+
+      .nav-links {
+        position: static;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 0;
+        background: transparent;
+        border: 0;
+      }
+
+      .nav-links a {
+        min-height: 40px;
+      }
+
+      .feature-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="logo" href="#inicio" aria-label="Tabla Periódica inicio">
+        <span class="logo-mark" aria-hidden="true">
+          <svg viewBox="0 0 64 64">
+            <path d="M32 6 54 19v26L32 58 10 45V19L32 6Z" fill="none" stroke="currentColor" stroke-width="2.4"/>
+            <ellipse cx="32" cy="32" rx="22" ry="8.5" fill="none" stroke="#36d1dc" stroke-width="2" transform="rotate(-28 32 32)"/>
+            <ellipse cx="32" cy="32" rx="22" ry="8.5" fill="none" stroke="#9ee493" stroke-width="2" transform="rotate(28 32 32)"/>
+            <circle cx="32" cy="32" r="5.6" fill="#9ee493"/>
+            <circle cx="15" cy="35" r="2.8" fill="#36d1dc"/>
+            <circle cx="49" cy="29" r="2.8" fill="#36d1dc"/>
+          </svg>
+        </span>
+        <span class="logo-text">
+          <span>Tabla Periódica</span>
+          <small>Periodic Explorer</small>
+        </span>
+      </a>
+      <button class="menu-toggle" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="primary-navigation">
+        <span aria-hidden="true"></span>
+      </button>
+      <nav id="primary-navigation" class="nav-links" aria-label="Navegación principal">
+        <a href="#inicio">Inicio</a>
+        <a href="#sobre-nosotros">Sobre Nosotros</a>
+        <a href="#elementos">Elementos</a>
+        <a href="#caracteristicas">Características</a>
+        <a href="#contacto">Contacto</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section id="inicio" class="hero">
+      <div class="container hero-grid">
+        <div>
+          <p class="eyebrow">Tabla periódica interactiva</p>
+          <h1>Descubre los elementos que construyen nuestro universo</h1>
+          <p>Explora los 118 elementos químicos oficiales con una experiencia visual clara, moderna y pensada para aprender composición, propiedades y categorías de un vistazo.</p>
+          <div class="cta-row">
+            <a class="btn" href="#elementos">Explorar elementos</a>
+          </div>
+        </div>
+        <div class="hero-visual" aria-label="Ilustración animada de estructura atómica">
+          <div class="orbit"><span class="electron"></span></div>
+          <div class="orbit"><span class="electron"></span></div>
+          <div class="orbit"><span class="electron"></span></div>
+          <div class="nucleus">H</div>
+          <div class="formula one">H₂O + CO₂</div>
+          <div class="formula two">NaCl · Fe · Au</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="sobre-nosotros">
+      <div class="container about-grid">
+        <div class="section-head">
+          <p class="eyebrow">Sobre Nosotros</p>
+          <h2>Química organizada para entender la materia</h2>
+          <p class="lead">La tabla periódica es el mapa esencial de la química: conecta estructura atómica, comportamiento, familias de elementos y propiedades que explican materiales, vida, energía y tecnología.</p>
+        </div>
+        <div class="info-panel">
+          <p>Nuestro objetivo educativo es convertir ese mapa en una experiencia accesible: una interfaz donde estudiantes, docentes y curiosos puedan reconocer patrones, comparar categorías y consultar datos básicos sin fricción.</p>
+          <div class="stat-grid" aria-label="Datos destacados de la plataforma">
+            <div class="stat"><strong>118</strong><span>elementos oficiales</span></div>
+            <div class="stat"><strong>10</strong><span>categorías visuales</span></div>
+            <div class="stat"><strong>7</strong><span>períodos químicos</span></div>
+            <div class="stat"><strong>18</strong><span>grupos principales</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="caracteristicas">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">Características</p>
+          <h2>Aprendizaje visual, ordenado e interactivo</h2>
+        </div>
+        <div class="feature-grid">
+          <article class="feature-card">
+            <div class="icon" aria-hidden="true">✦</div>
+            <h3>Elementos interactivos</h3>
+            <p>Pasa el cursor o toca cada casilla para consultar propiedades clave y reforzar la memoria visual.</p>
+          </article>
+          <article class="feature-card">
+            <div class="icon" aria-hidden="true">▦</div>
+            <h3>Categorías de elementos</h3>
+            <p>Colores diferenciados para metales, no metales, gases nobles, halógenos y series internas.</p>
+          </article>
+          <article class="feature-card">
+            <div class="icon" aria-hidden="true">⚛</div>
+            <h3>Información atómica</h3>
+            <p>Número atómico, símbolo, masa, grupo y período reunidos en una ficha simple y rápida.</p>
+          </article>
+          <article class="feature-card">
+            <div class="icon" aria-hidden="true">⌁</div>
+            <h3>Recursos educativos</h3>
+            <p>Una base clara para clases, repasos, introducciones a química general y exploración autónoma.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="elementos" class="table-section">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">Elementos</p>
+          <h2>Tabla periódica completa</h2>
+          <p class="lead">Los 118 elementos oficiales organizados según la estructura real de la tabla periódica. Selecciona una casilla para ver sus datos adicionales.</p>
+        </div>
+        <div class="table-shell">
+          <div class="table-toolbar">
+            <p>Vista optimizada para explorar horizontalmente en pantallas pequeñas.</p>
+            <p id="selection-status" aria-live="polite">Ningún elemento seleccionado.</p>
+          </div>
+          <div id="legend" class="legend" aria-label="Categorías de elementos"></div>
+          <div class="periodic-scroll">
+            <div id="periodic-table" class="periodic-table" aria-label="Tabla periódica de los elementos"></div>
+          </div>
+        </div>
+      </div>
+      <aside id="details" class="details" aria-live="polite" aria-label="Información adicional del elemento"></aside>
+    </section>
+
+    <section id="testimonios">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">Testimonios</p>
+          <h2>Voces de aula y laboratorio</h2>
+        </div>
+        <div class="testimonial-grid">
+          <article class="testimonial">
+            <p>“Mis estudiantes entendieron mejor las familias químicas al ver colores, posición y datos juntos en una misma interfaz.”</p>
+            <cite>Marina López, docente de química</cite>
+          </article>
+          <article class="testimonial">
+            <p>“La tabla dejó de ser una imagen para memorizar y se volvió una herramienta para explorar patrones.”</p>
+            <cite>Julián Torres, estudiante</cite>
+          </article>
+          <article class="testimonial">
+            <p>“La uso para introducir conceptos atómicos antes de entrar en configuraciones electrónicas más complejas.”</p>
+            <cite>Camila Herrera, tutora STEM</cite>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="contacto">
+      <div class="container contact-grid">
+        <div class="section-head">
+          <p class="eyebrow">Contacto</p>
+          <h2>Hablemos de ciencia, clases y curiosidad</h2>
+          <p class="lead">Envíanos una consulta, sugerencia o propuesta educativa. El formulario es demostrativo y no envía datos a un servidor.</p>
+        </div>
+        <div class="contact-panel">
+          <form id="contact-form">
+            <label for="name">Nombre
+              <input id="name" name="name" type="text" autocomplete="name" required>
+            </label>
+            <label for="email">Email
+              <input id="email" name="email" type="email" autocomplete="email" required>
+            </label>
+            <label for="message">Mensaje
+              <textarea id="message" name="message" required></textarea>
+            </label>
+            <button class="btn" type="submit">Enviar</button>
+            <p id="form-note" class="form-note" aria-live="polite"></p>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <p>© 2026 Periodic Explorer. Educación química clara e interactiva.</p>
+      <nav class="socials" aria-label="Redes sociales">
+        <a href="https://github.com/" target="_blank" rel="noopener" aria-label="GitHub">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.2.8-.6v-2.2c-3.4.7-4.1-1.4-4.1-1.4-.5-1.4-1.3-1.8-1.3-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.9 1.3 1.9 1.3 1.1 1.9 2.9 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.6.1-3.2 0 0 1-.3 3.3 1.2a11.4 11.4 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.6 1.6.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.5.4.9 1.1.9 2.2v3.8c0 .4.2.7.8.6A12 12 0 0 0 12 .5Z"/></svg>
+        </a>
+        <a href="https://www.linkedin.com/" target="_blank" rel="noopener" aria-label="LinkedIn">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 3h-17A1.5 1.5 0 0 0 2 4.5v15A1.5 1.5 0 0 0 3.5 21h17a1.5 1.5 0 0 0 1.5-1.5v-15A1.5 1.5 0 0 0 20.5 3ZM8.1 18H5.6V9.7h2.5V18ZM6.8 8.6a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3ZM18.4 18h-2.5v-4.1c0-1-.4-1.7-1.3-1.7-.7 0-1.1.5-1.3.9-.1.2-.1.4-.1.6V18h-2.5V9.7h2.5v1.1c.3-.5 1-1.3 2.4-1.3 1.8 0 2.8 1.2 2.8 3.7V18Z"/></svg>
+        </a>
+        <a href="https://www.instagram.com/" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.8 2h8.4A5.8 5.8 0 0 1 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8A5.8 5.8 0 0 1 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2Zm0 2A3.8 3.8 0 0 0 4 7.8v8.4A3.8 3.8 0 0 0 7.8 20h8.4a3.8 3.8 0 0 0 3.8-3.8V7.8A3.8 3.8 0 0 0 16.2 4H7.8Zm8.7 2.3a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4ZM12 7.2a4.8 4.8 0 1 1 0 9.6 4.8 4.8 0 0 1 0-9.6Zm0 2a2.8 2.8 0 1 0 0 5.6 2.8 2.8 0 0 0 0-5.6Z"/></svg>
+        </a>
+        <a href="https://x.com/" target="_blank" rel="noopener" aria-label="Twitter/X">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.3 10.2 22.2 1h-1.9l-6.8 7.9L8 1H1.7l8.3 12L1.7 23h1.9l7.2-8.4 5.7 8.4h6.3l-8.5-12.8Zm-2.6 3-.9-1.3L4.1 2.4h3l5.5 7.8.9 1.3 7 10.1h-3l-5.8-8.4Z"/></svg>
+        </a>
+      </nav>
+    </div>
+  </footer>
+
+  <script>
+    const categories = {
+      "Metales alcalinos": "#f97373",
+      "Metales alcalinotérreos": "#f6ad55",
+      "Metales de transición": "#4fd1c5",
+      "Metales post-transición": "#63b3ed",
+      "Metaloides": "#b5e48c",
+      "No metales": "#f6e05e",
+      "Halógenos": "#d6bcfa",
+      "Gases nobles": "#90cdf4",
+      "Lantánidos": "#f687b3",
+      "Actínidos": "#c084fc"
+    };
+
+    const elements = [
+      {z:1,s:"H",n:"Hidrógeno",m:"1.008",g:1,p:1,c:"No metales",x:1,y:1},
+      {z:2,s:"He",n:"Helio",m:"4.0026",g:18,p:1,c:"Gases nobles",x:18,y:1},
+      {z:3,s:"Li",n:"Litio",m:"6.94",g:1,p:2,c:"Metales alcalinos",x:1,y:2},
+      {z:4,s:"Be",n:"Berilio",m:"9.0122",g:2,p:2,c:"Metales alcalinotérreos",x:2,y:2},
+      {z:5,s:"B",n:"Boro",m:"10.81",g:13,p:2,c:"Metaloides",x:13,y:2},
+      {z:6,s:"C",n:"Carbono",m:"12.011",g:14,p:2,c:"No metales",x:14,y:2},
+      {z:7,s:"N",n:"Nitrógeno",m:"14.007",g:15,p:2,c:"No metales",x:15,y:2},
+      {z:8,s:"O",n:"Oxígeno",m:"15.999",g:16,p:2,c:"No metales",x:16,y:2},
+      {z:9,s:"F",n:"Flúor",m:"18.998",g:17,p:2,c:"Halógenos",x:17,y:2},
+      {z:10,s:"Ne",n:"Neón",m:"20.180",g:18,p:2,c:"Gases nobles",x:18,y:2},
+      {z:11,s:"Na",n:"Sodio",m:"22.990",g:1,p:3,c:"Metales alcalinos",x:1,y:3},
+      {z:12,s:"Mg",n:"Magnesio",m:"24.305",g:2,p:3,c:"Metales alcalinotérreos",x:2,y:3},
+      {z:13,s:"Al",n:"Aluminio",m:"26.982",g:13,p:3,c:"Metales post-transición",x:13,y:3},
+      {z:14,s:"Si",n:"Silicio",m:"28.085",g:14,p:3,c:"Metaloides",x:14,y:3},
+      {z:15,s:"P",n:"Fósforo",m:"30.974",g:15,p:3,c:"No metales",x:15,y:3},
+      {z:16,s:"S",n:"Azufre",m:"32.06",g:16,p:3,c:"No metales",x:16,y:3},
+      {z:17,s:"Cl",n:"Cloro",m:"35.45",g:17,p:3,c:"Halógenos",x:17,y:3},
+      {z:18,s:"Ar",n:"Argón",m:"39.948",g:18,p:3,c:"Gases nobles",x:18,y:3},
+      {z:19,s:"K",n:"Potasio",m:"39.098",g:1,p:4,c:"Metales alcalinos",x:1,y:4},
+      {z:20,s:"Ca",n:"Calcio",m:"40.078",g:2,p:4,c:"Metales alcalinotérreos",x:2,y:4},
+      {z:21,s:"Sc",n:"Escandio",m:"44.956",g:3,p:4,c:"Metales de transición",x:3,y:4},
+      {z:22,s:"Ti",n:"Titanio",m:"47.867",g:4,p:4,c:"Metales de transición",x:4,y:4},
+      {z:23,s:"V",n:"Vanadio",m:"50.942",g:5,p:4,c:"Metales de transición",x:5,y:4},
+      {z:24,s:"Cr",n:"Cromo",m:"51.996",g:6,p:4,c:"Metales de transición",x:6,y:4},
+      {z:25,s:"Mn",n:"Manganeso",m:"54.938",g:7,p:4,c:"Metales de transición",x:7,y:4},
+      {z:26,s:"Fe",n:"Hierro",m:"55.845",g:8,p:4,c:"Metales de transición",x:8,y:4},
+      {z:27,s:"Co",n:"Cobalto",m:"58.933",g:9,p:4,c:"Metales de transición",x:9,y:4},
+      {z:28,s:"Ni",n:"Níquel",m:"58.693",g:10,p:4,c:"Metales de transición",x:10,y:4},
+      {z:29,s:"Cu",n:"Cobre",m:"63.546",g:11,p:4,c:"Metales de transición",x:11,y:4},
+      {z:30,s:"Zn",n:"Zinc",m:"65.38",g:12,p:4,c:"Metales de transición",x:12,y:4},
+      {z:31,s:"Ga",n:"Galio",m:"69.723",g:13,p:4,c:"Metales post-transición",x:13,y:4},
+      {z:32,s:"Ge",n:"Germanio",m:"72.630",g:14,p:4,c:"Metaloides",x:14,y:4},
+      {z:33,s:"As",n:"Arsénico",m:"74.922",g:15,p:4,c:"Metaloides",x:15,y:4},
+      {z:34,s:"Se",n:"Selenio",m:"78.971",g:16,p:4,c:"No metales",x:16,y:4},
+      {z:35,s:"Br",n:"Bromo",m:"79.904",g:17,p:4,c:"Halógenos",x:17,y:4},
+      {z:36,s:"Kr",n:"Kriptón",m:"83.798",g:18,p:4,c:"Gases nobles",x:18,y:4},
+      {z:37,s:"Rb",n:"Rubidio",m:"85.468",g:1,p:5,c:"Metales alcalinos",x:1,y:5},
+      {z:38,s:"Sr",n:"Estroncio",m:"87.62",g:2,p:5,c:"Metales alcalinotérreos",x:2,y:5},
+      {z:39,s:"Y",n:"Itrio",m:"88.906",g:3,p:5,c:"Metales de transición",x:3,y:5},
+      {z:40,s:"Zr",n:"Circonio",m:"91.224",g:4,p:5,c:"Metales de transición",x:4,y:5},
+      {z:41,s:"Nb",n:"Niobio",m:"92.906",g:5,p:5,c:"Metales de transición",x:5,y:5},
+      {z:42,s:"Mo",n:"Molibdeno",m:"95.95",g:6,p:5,c:"Metales de transición",x:6,y:5},
+      {z:43,s:"Tc",n:"Tecnecio",m:"98",g:7,p:5,c:"Metales de transición",x:7,y:5},
+      {z:44,s:"Ru",n:"Rutenio",m:"101.07",g:8,p:5,c:"Metales de transición",x:8,y:5},
+      {z:45,s:"Rh",n:"Rodio",m:"102.91",g:9,p:5,c:"Metales de transición",x:9,y:5},
+      {z:46,s:"Pd",n:"Paladio",m:"106.42",g:10,p:5,c:"Metales de transición",x:10,y:5},
+      {z:47,s:"Ag",n:"Plata",m:"107.87",g:11,p:5,c:"Metales de transición",x:11,y:5},
+      {z:48,s:"Cd",n:"Cadmio",m:"112.41",g:12,p:5,c:"Metales de transición",x:12,y:5},
+      {z:49,s:"In",n:"Indio",m:"114.82",g:13,p:5,c:"Metales post-transición",x:13,y:5},
+      {z:50,s:"Sn",n:"Estaño",m:"118.71",g:14,p:5,c:"Metales post-transición",x:14,y:5},
+      {z:51,s:"Sb",n:"Antimonio",m:"121.76",g:15,p:5,c:"Metaloides",x:15,y:5},
+      {z:52,s:"Te",n:"Telurio",m:"127.60",g:16,p:5,c:"Metaloides",x:16,y:5},
+      {z:53,s:"I",n:"Yodo",m:"126.90",g:17,p:5,c:"Halógenos",x:17,y:5},
+      {z:54,s:"Xe",n:"Xenón",m:"131.29",g:18,p:5,c:"Gases nobles",x:18,y:5},
+      {z:55,s:"Cs",n:"Cesio",m:"132.91",g:1,p:6,c:"Metales alcalinos",x:1,y:6},
+      {z:56,s:"Ba",n:"Bario",m:"137.33",g:2,p:6,c:"Metales alcalinotérreos",x:2,y:6},
+      {z:57,s:"La",n:"Lantano",m:"138.91",g:3,p:6,c:"Lantánidos",x:3,y:9},
+      {z:58,s:"Ce",n:"Cerio",m:"140.12",g:3,p:6,c:"Lantánidos",x:4,y:9},
+      {z:59,s:"Pr",n:"Praseodimio",m:"140.91",g:3,p:6,c:"Lantánidos",x:5,y:9},
+      {z:60,s:"Nd",n:"Neodimio",m:"144.24",g:3,p:6,c:"Lantánidos",x:6,y:9},
+      {z:61,s:"Pm",n:"Prometio",m:"145",g:3,p:6,c:"Lantánidos",x:7,y:9},
+      {z:62,s:"Sm",n:"Samario",m:"150.36",g:3,p:6,c:"Lantánidos",x:8,y:9},
+      {z:63,s:"Eu",n:"Europio",m:"151.96",g:3,p:6,c:"Lantánidos",x:9,y:9},
+      {z:64,s:"Gd",n:"Gadolinio",m:"157.25",g:3,p:6,c:"Lantánidos",x:10,y:9},
+      {z:65,s:"Tb",n:"Terbio",m:"158.93",g:3,p:6,c:"Lantánidos",x:11,y:9},
+      {z:66,s:"Dy",n:"Disprosio",m:"162.50",g:3,p:6,c:"Lantánidos",x:12,y:9},
+      {z:67,s:"Ho",n:"Holmio",m:"164.93",g:3,p:6,c:"Lantánidos",x:13,y:9},
+      {z:68,s:"Er",n:"Erbio",m:"167.26",g:3,p:6,c:"Lantánidos",x:14,y:9},
+      {z:69,s:"Tm",n:"Tulio",m:"168.93",g:3,p:6,c:"Lantánidos",x:15,y:9},
+      {z:70,s:"Yb",n:"Iterbio",m:"173.05",g:3,p:6,c:"Lantánidos",x:16,y:9},
+      {z:71,s:"Lu",n:"Lutecio",m:"174.97",g:3,p:6,c:"Lantánidos",x:17,y:9},
+      {z:72,s:"Hf",n:"Hafnio",m:"178.49",g:4,p:6,c:"Metales de transición",x:4,y:6},
+      {z:73,s:"Ta",n:"Tantalio",m:"180.95",g:5,p:6,c:"Metales de transición",x:5,y:6},
+      {z:74,s:"W",n:"Wolframio",m:"183.84",g:6,p:6,c:"Metales de transición",x:6,y:6},
+      {z:75,s:"Re",n:"Renio",m:"186.21",g:7,p:6,c:"Metales de transición",x:7,y:6},
+      {z:76,s:"Os",n:"Osmio",m:"190.23",g:8,p:6,c:"Metales de transición",x:8,y:6},
+      {z:77,s:"Ir",n:"Iridio",m:"192.22",g:9,p:6,c:"Metales de transición",x:9,y:6},
+      {z:78,s:"Pt",n:"Platino",m:"195.08",g:10,p:6,c:"Metales de transición",x:10,y:6},
+      {z:79,s:"Au",n:"Oro",m:"196.97",g:11,p:6,c:"Metales de transición",x:11,y:6},
+      {z:80,s:"Hg",n:"Mercurio",m:"200.59",g:12,p:6,c:"Metales de transición",x:12,y:6},
+      {z:81,s:"Tl",n:"Talio",m:"204.38",g:13,p:6,c:"Metales post-transición",x:13,y:6},
+      {z:82,s:"Pb",n:"Plomo",m:"207.2",g:14,p:6,c:"Metales post-transición",x:14,y:6},
+      {z:83,s:"Bi",n:"Bismuto",m:"208.98",g:15,p:6,c:"Metales post-transición",x:15,y:6},
+      {z:84,s:"Po",n:"Polonio",m:"209",g:16,p:6,c:"Metales post-transición",x:16,y:6},
+      {z:85,s:"At",n:"Astato",m:"210",g:17,p:6,c:"Halógenos",x:17,y:6},
+      {z:86,s:"Rn",n:"Radón",m:"222",g:18,p:6,c:"Gases nobles",x:18,y:6},
+      {z:87,s:"Fr",n:"Francio",m:"223",g:1,p:7,c:"Metales alcalinos",x:1,y:7},
+      {z:88,s:"Ra",n:"Radio",m:"226",g:2,p:7,c:"Metales alcalinotérreos",x:2,y:7},
+      {z:89,s:"Ac",n:"Actinio",m:"227",g:3,p:7,c:"Actínidos",x:3,y:10},
+      {z:90,s:"Th",n:"Torio",m:"232.04",g:3,p:7,c:"Actínidos",x:4,y:10},
+      {z:91,s:"Pa",n:"Protactinio",m:"231.04",g:3,p:7,c:"Actínidos",x:5,y:10},
+      {z:92,s:"U",n:"Uranio",m:"238.03",g:3,p:7,c:"Actínidos",x:6,y:10},
+      {z:93,s:"Np",n:"Neptunio",m:"237",g:3,p:7,c:"Actínidos",x:7,y:10},
+      {z:94,s:"Pu",n:"Plutonio",m:"244",g:3,p:7,c:"Actínidos",x:8,y:10},
+      {z:95,s:"Am",n:"Americio",m:"243",g:3,p:7,c:"Actínidos",x:9,y:10},
+      {z:96,s:"Cm",n:"Curio",m:"247",g:3,p:7,c:"Actínidos",x:10,y:10},
+      {z:97,s:"Bk",n:"Berkelio",m:"247",g:3,p:7,c:"Actínidos",x:11,y:10},
+      {z:98,s:"Cf",n:"Californio",m:"251",g:3,p:7,c:"Actínidos",x:12,y:10},
+      {z:99,s:"Es",n:"Einstenio",m:"252",g:3,p:7,c:"Actínidos",x:13,y:10},
+      {z:100,s:"Fm",n:"Fermio",m:"257",g:3,p:7,c:"Actínidos",x:14,y:10},
+      {z:101,s:"Md",n:"Mendelevio",m:"258",g:3,p:7,c:"Actínidos",x:15,y:10},
+      {z:102,s:"No",n:"Nobelio",m:"259",g:3,p:7,c:"Actínidos",x:16,y:10},
+      {z:103,s:"Lr",n:"Lawrencio",m:"266",g:3,p:7,c:"Actínidos",x:17,y:10},
+      {z:104,s:"Rf",n:"Rutherfordio",m:"267",g:4,p:7,c:"Metales de transición",x:4,y:7},
+      {z:105,s:"Db",n:"Dubnio",m:"268",g:5,p:7,c:"Metales de transición",x:5,y:7},
+      {z:106,s:"Sg",n:"Seaborgio",m:"269",g:6,p:7,c:"Metales de transición",x:6,y:7},
+      {z:107,s:"Bh",n:"Bohrio",m:"270",g:7,p:7,c:"Metales de transición",x:7,y:7},
+      {z:108,s:"Hs",n:"Hassio",m:"277",g:8,p:7,c:"Metales de transición",x:8,y:7},
+      {z:109,s:"Mt",n:"Meitnerio",m:"278",g:9,p:7,c:"Metales de transición",x:9,y:7},
+      {z:110,s:"Ds",n:"Darmstadtio",m:"281",g:10,p:7,c:"Metales de transición",x:10,y:7},
+      {z:111,s:"Rg",n:"Roentgenio",m:"282",g:11,p:7,c:"Metales de transición",x:11,y:7},
+      {z:112,s:"Cn",n:"Copernicio",m:"285",g:12,p:7,c:"Metales de transición",x:12,y:7},
+      {z:113,s:"Nh",n:"Nihonio",m:"286",g:13,p:7,c:"Metales post-transición",x:13,y:7},
+      {z:114,s:"Fl",n:"Flerovio",m:"289",g:14,p:7,c:"Metales post-transición",x:14,y:7},
+      {z:115,s:"Mc",n:"Moscovio",m:"290",g:15,p:7,c:"Metales post-transición",x:15,y:7},
+      {z:116,s:"Lv",n:"Livermorio",m:"293",g:16,p:7,c:"Metales post-transición",x:16,y:7},
+      {z:117,s:"Ts",n:"Teneso",m:"294",g:17,p:7,c:"Halógenos",x:17,y:7},
+      {z:118,s:"Og",n:"Oganesón",m:"294",g:18,p:7,c:"Gases nobles",x:18,y:7}
+    ];
+
+    const table = document.getElementById("periodic-table");
+    const legend = document.getElementById("legend");
+    const details = document.getElementById("details");
+    const selectionStatus = document.getElementById("selection-status");
+
+    Object.entries(categories).forEach(([name, color]) => {
+      const item = document.createElement("span");
+      item.className = "legend-item";
+      item.innerHTML = `<span class="swatch" style="--c:${color}"></span>${name}`;
+      legend.appendChild(item);
+    });
+
+    function showDetails(element) {
+      document.querySelectorAll(".element.active").forEach((node) => node.classList.remove("active"));
+      const button = document.querySelector(`[data-z="${element.z}"]`);
+      if (button) button.classList.add("active");
+      selectionStatus.textContent = `${element.n} seleccionado.`;
+      details.classList.add("visible");
+      details.innerHTML = `
+        <h3><span>${element.s}</span>${element.n}</h3>
+        <div class="detail-grid">
+          <div><strong>Número atómico</strong><span>${element.z}</span></div>
+          <div><strong>Masa atómica</strong><span>${element.m}</span></div>
+          <div><strong>Grupo</strong><span>${element.g}</span></div>
+          <div><strong>Período</strong><span>${element.p}</span></div>
+          <div><strong>Categoría</strong><span>${element.c}</span></div>
+          <div><strong>Símbolo</strong><span>${element.s}</span></div>
+        </div>
+      `;
+    }
+
+    function hideDetails() {
+      document.querySelectorAll(".element.active").forEach((node) => node.classList.remove("active"));
+      details.classList.remove("visible");
+      details.innerHTML = "";
+      selectionStatus.textContent = "Ningún elemento seleccionado.";
+    }
+
+    elements.forEach((element) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "element";
+      button.dataset.z = element.z;
+      button.style.gridColumn = element.x;
+      button.style.gridRow = element.y;
+      button.style.setProperty("--cat-color", categories[element.c]);
+      button.setAttribute("aria-label", `${element.n}, símbolo ${element.s}, número atómico ${element.z}`);
+      button.innerHTML = `
+        <span class="atomic-number">${element.z}</span>
+        <span class="symbol">${element.s}</span>
+        <span class="name">${element.n}</span>
+      `;
+      button.addEventListener("mouseenter", () => showDetails(element));
+      button.addEventListener("mouseleave", hideDetails);
+      button.addEventListener("focus", () => showDetails(element));
+      button.addEventListener("blur", hideDetails);
+      button.addEventListener("click", () => showDetails(element));
+      table.appendChild(button);
+    });
+
+    const menuButton = document.querySelector(".menu-toggle");
+    const navLinks = document.querySelectorAll(".nav-links a");
+
+    menuButton.addEventListener("click", () => {
+      const isOpen = document.body.classList.toggle("menu-open");
+      menuButton.setAttribute("aria-expanded", String(isOpen));
+      menuButton.setAttribute("aria-label", isOpen ? "Cerrar menú" : "Abrir menú");
+    });
+
+    navLinks.forEach((link) => {
+      link.addEventListener("click", () => {
+        document.body.classList.remove("menu-open");
+        menuButton.setAttribute("aria-expanded", "false");
+        menuButton.setAttribute("aria-label", "Abrir menú");
+      });
+    });
+
+    document.getElementById("contact-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      event.currentTarget.reset();
+      document.getElementById("form-note").textContent = "Mensaje preparado. Gracias por conectar con Periodic Explorer.";
+    });
+  </script>
+</body>
+</html>

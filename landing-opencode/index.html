@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tabla Periódica Interactiva</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+--bg:#0a0e1a;--bg2:#111827;--card:#1a1f35;--border:#2a2f4a;
+--text:#e8edf5;--text2:#94a3b8;--accent:#38bdf8;--accent2:#6366f1;
+--accent3:#10b981;--grad:linear-gradient(135deg,#38bdf8,#6366f1);
+--nonmetal:#38bdf8;--noble:#a78bfa;--alkali:#f97316;--alkaline:#facc15;
+--transition:#6366f1;--posttrans:#10b981;--metalloid:#14b8a6;
+--halogen:#f472b6;--lanthanide:#8b5cf6;--actinide:#ec4899;
+--radius:12px;--shadow:0 4px 20px rgba(0,0,0,.3);
+--font:'Segoe UI',system-ui,-apple-system,sans-serif
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
+a{color:var(--accent);text-decoration:none}
+.container{max-width:1280px;margin:0 auto;padding:0 20px}
+section{padding:80px 0}
+h2{font-size:2rem;margin-bottom:12px;text-align:center}
+h2 span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.section-desc{text-align:center;color:var(--text2);max-width:640px;margin:0 auto 48px;font-size:1.05rem}
+
+header{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(10,14,26,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.header-inner{display:flex;align-items:center;justify-content:space-between;height:64px;padding:0 20px;max-width:1280px;margin:0 auto}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.25rem}
+.logo-icon{width:34px;height:34px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-icon svg{width:34px;height:34px}
+.logo span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+nav{display:flex;gap:24px}
+nav a{color:var(--text2);font-size:.9rem;font-weight:500;transition:color .2s;position:relative}
+nav a:hover{color:var(--accent)}
+nav a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;background:var(--grad);transition:width .3s}
+nav a:hover::after{width:100%}
+.menu-toggle{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
+.menu-toggle span{width:24px;height:2px;background:var(--text);border-radius:2px;transition:.3s}
+
+.hero{min-height:100vh;display:flex;align-items:center;position:relative;overflow:hidden;padding-top:64px}
+.hero-bg{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.hero-bg .particle{position:absolute;border-radius:50%;background:var(--accent);opacity:.08;animation:float 20s infinite ease-in-out}
+.hero-bg .particle:nth-child(1){width:300px;height:300px;top:-80px;left:-80px;animation-delay:0s}
+.hero-bg .particle:nth-child(2){width:200px;height:200px;bottom:-60px;right:-60px;background:var(--accent2);animation-delay:-7s}
+.hero-bg .particle:nth-child(3){width:150px;height:150px;top:50%;right:20%;background:var(--accent3);animation-delay:-14s}
+@keyframes float{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(30px,-30px) scale(1.05)}66%{transform:translate(-20px,20px) scale(.95)}}
+.hero-content{position:relative;z-index:1;text-align:center;max-width:800px;margin:0 auto}
+.hero h1{font-size:clamp(2rem,5vw,3.5rem);font-weight:800;margin-bottom:20px;line-height:1.2}
+.hero h1 span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{color:var(--text2);font-size:1.1rem;margin-bottom:32px;max-width:600px;margin-left:auto;margin-right:auto}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:50px;font-weight:600;font-size:1rem;cursor:pointer;border:none;transition:transform .2s,box-shadow .2s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(56,189,248,.3)}
+.btn-primary{background:var(--grad);color:#fff}
+.atom-visual{display:flex;justify-content:center;gap:8px;margin-bottom:32px;flex-wrap:wrap}
+.atom-dot{width:12px;height:12px;border-radius:50%;animation:pulse 2s infinite}
+.atom-dot:nth-child(1){background:var(--accent);animation-delay:0s}
+.atom-dot:nth-child(2){background:var(--accent2);animation-delay:.3s}
+.atom-dot:nth-child(3){background:var(--accent3);animation-delay:.6s}
+.atom-dot:nth-child(4){background:var(--nonmetal);animation-delay:.9s}
+.atom-dot:nth-child(5){background:var(--halogen);animation-delay:1.2s}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:.6}50%{transform:scale(1.5);opacity:1}}
+
+.about{background:var(--bg2)}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.about-text p{color:var(--text2);margin-bottom:16px}
+.about-visual{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.about-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center;transition:transform .3s,border-color .3s}
+.about-card:hover{transform:translateY(-4px);border-color:var(--accent)}
+.about-card .num{font-size:2rem;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.about-card .label{color:var(--text2);font-size:.85rem;margin-top:4px}
+
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px}
+.feature-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:32px 24px;text-align:center;transition:transform .3s,border-color .3s,box-shadow .3s}
+.feature-card:hover{transform:translateY(-6px);border-color:var(--accent);box-shadow:0 8px 30px rgba(56,189,248,.15)}
+.feature-icon{width:56px;height:56px;margin:0 auto 16px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px}
+.feature-card:nth-child(1) .feature-icon{background:rgba(56,189,248,.15);color:var(--accent)}
+.feature-card:nth-child(2) .feature-icon{background:rgba(99,102,241,.15);color:var(--accent2)}
+.feature-card:nth-child(3) .feature-icon{background:rgba(16,185,129,.15);color:var(--accent3)}
+.feature-card:nth-child(4) .feature-icon{background:rgba(168,85,247,.15);color:#a855f7}
+.feature-card h3{font-size:1.15rem;margin-bottom:8px}
+.feature-card p{color:var(--text2);font-size:.9rem;line-height:1.55}
+
+.periodic{overflow-x:auto;padding-top:60px;padding-bottom:60px}
+.periodic-wrapper{min-width:1100px;position:relative}
+.ptable{display:grid;grid-template-columns:repeat(18,1fr);gap:3px;margin-bottom:12px}
+.ptable .empty-cell{min-height:68px}
+.element{position:relative;border-radius:6px;padding:4px 2px;text-align:center;cursor:pointer;transition:transform .15s,box-shadow .15s;min-height:68px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px solid transparent}
+.element .atomic{font-size:10px;opacity:.8;line-height:1}
+.element .symbol{font-size:1.1rem;font-weight:700;line-height:1.3}
+.element .name{font-size:7px;line-height:1;margin-top:2px;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.element:hover{transform:scale(1.35);z-index:10;box-shadow:0 8px 25px rgba(0,0,0,.5);border-color:rgba(255,255,255,.3)}
+.element .tooltip{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%) scale(.9);background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 14px;white-space:nowrap;font-size:.8rem;opacity:0;pointer-events:none;transition:all .25s;z-index:100;box-shadow:var(--shadow)}
+.element:hover .tooltip{opacity:1;transform:translateX(-50%) scale(1)}
+.element .tooltip strong{display:block;margin-bottom:4px;font-size:.9rem}
+.element .tooltip span{display:block;color:var(--text2);font-size:.75rem}
+
+.category-nonmetal{background:rgba(56,189,248,.25);border-color:rgba(56,189,248,.4)}
+.category-noble{background:rgba(167,139,250,.25);border-color:rgba(167,139,250,.4)}
+.category-alkali{background:rgba(249,115,22,.25);border-color:rgba(249,115,22,.4)}
+.category-alkaline{background:rgba(250,204,21,.2);border-color:rgba(250,204,21,.35)}
+.category-transition{background:rgba(99,102,241,.25);border-color:rgba(99,102,241,.4)}
+.category-posttrans{background:rgba(16,185,129,.25);border-color:rgba(16,185,129,.4)}
+.category-metalloid{background:rgba(20,184,166,.25);border-color:rgba(20,184,166,.4)}
+.category-halogen{background:rgba(244,114,182,.25);border-color:rgba(244,114,182,.4)}
+.category-lanthanide{background:rgba(139,92,246,.25);border-color:rgba(139,92,246,.4)}
+.category-actinide{background:rgba(236,72,153,.25);border-color:rgba(236,72,153,.4)}
+
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;justify-content:center;margin:16px 0 20px}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--text2)}
+.legend-color{width:14px;height:14px;border-radius:4px;flex-shrink:0}
+.lanthanide-row,.actinide-row{display:grid;grid-template-columns:repeat(18,1fr);gap:3px;margin-top:4px}
+.lanthanide-row .element,.actinide-row .element,.lanthanide-row .empty-cell,.actinide-row .empty-cell{min-height:60px}
+.row-label{font-size:.7rem;color:var(--text2);display:flex;align-items:center;justify-content:flex-end;padding-right:8px;min-height:60px;white-space:nowrap;grid-column:span 1}
+.row-label-span3{font-size:.7rem;color:var(--text2);display:flex;align-items:center;justify-content:flex-end;padding-right:8px;min-height:60px;white-space:nowrap;grid-column:span 3}
+
+.testimonials{background:var(--bg2)}
+.testimonials-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}
+.testimonial-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;transition:transform .3s,border-color .3s}
+.testimonial-card:hover{transform:translateY(-4px);border-color:var(--accent)}
+.testimonial-card .stars{color:#facc15;margin-bottom:12px;font-size:1rem}
+.testimonial-card blockquote{color:var(--text2);font-style:italic;margin-bottom:16px;line-height:1.6}
+.testimonial-card .author{display:flex;align-items:center;gap:12px}
+.testimonial-card .avatar{width:44px;height:44px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.1rem;color:#fff;flex-shrink:0}
+.testimonial-card .author-info strong{display:block;font-size:.9rem}
+.testimonial-card .author-info span{color:var(--text2);font-size:.8rem}
+
+.contact-form{max-width:560px;margin:0 auto}
+.form-group{margin-bottom:20px}
+.form-group label{display:block;font-size:.9rem;font-weight:500;margin-bottom:6px;color:var(--text2)}
+.form-group input,.form-group textarea{width:100%;padding:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:var(--font);font-size:.95rem;transition:border-color .3s;outline:none}
+.form-group input:focus,.form-group textarea:focus{border-color:var(--accent)}
+.form-group textarea{min-height:140px;resize:vertical}
+.btn-submit{width:100%;padding:14px;font-size:1rem}
+
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:48px 0 24px}
+.footer-content{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:24px;margin-bottom:32px}
+.footer-links{display:flex;gap:20px}
+.footer-links a{color:var(--text2);transition:color .3s;font-size:1.35rem;display:flex;align-items:center}
+.footer-links a:hover{color:var(--accent);transform:translateY(-2px)}
+.footer-bottom{text-align:center;color:var(--text2);font-size:.85rem;padding-top:24px;border-top:1px solid var(--border)}
+
+@media(max-width:768px){
+.menu-toggle{display:flex}
+nav{position:fixed;top:64px;left:0;right:0;background:rgba(10,14,26,.98);backdrop-filter:blur(12px);flex-direction:column;padding:20px;gap:16px;border-bottom:1px solid var(--border);transform:translateY(-120%);opacity:0;transition:all .35s;pointer-events:none}
+nav.open{transform:translateY(0);opacity:1;pointer-events:auto}
+.menu-toggle.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.menu-toggle.open span:nth-child(2){opacity:0}
+.menu-toggle.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+.about-grid{grid-template-columns:1fr}
+.hero h1{font-size:1.8rem}
+section{padding:60px 0}
+.ptable{gap:2px}
+.element{min-height:56px;padding:3px 1px}
+.element .symbol{font-size:.95rem}
+.element .atomic{font-size:8px}
+.element .name{font-size:6px}
+.periodic-wrapper{min-width:auto;overflow-x:auto}
+.ptable{min-width:900px}
+.lanthanide-row,.actinide-row{min-width:900px}
+}
+</style>
+</head>
+<body>
+
+<header>
+<div class="header-inner">
+<a href="#hero" class="logo">
+<div class="logo-icon">
+<svg viewBox="0 0 100 100" fill="none">
+<ellipse cx="50" cy="50" rx="46" ry="18" stroke="url(#lg)" stroke-width="2.5" opacity=".7"/>
+<ellipse cx="50" cy="50" rx="46" ry="18" stroke="url(#lg)" stroke-width="2.5" opacity=".7" transform="rotate(60 50 50)"/>
+<ellipse cx="50" cy="50" rx="46" ry="18" stroke="url(#lg)" stroke-width="2.5" opacity=".7" transform="rotate(-60 50 50)"/>
+<circle cx="50" cy="50" r="9" fill="url(#lg)"/>
+<defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#38bdf8"/><stop offset="1" stop-color="#6366f1"/></linearGradient></defs>
+</svg>
+</div>
+<span>Tabla Periódica</span>
+</a>
+<button class="menu-toggle" aria-label="Menú" onclick="toggleMenu()">
+<span></span><span></span><span></span>
+</button>
+<nav id="nav">
+<a href="#hero" onclick="closeMenu()">Inicio</a>
+<a href="#sobre" onclick="closeMenu()">Sobre Nosotros</a>
+<a href="#elementos" onclick="closeMenu()">Elementos</a>
+<a href="#caracteristicas" onclick="closeMenu()">Características</a>
+<a href="#contacto" onclick="closeMenu()">Contacto</a>
+</nav>
+</div>
+</header>
+
+<section class="hero" id="hero">
+<div class="hero-bg">
+<div class="particle"></div>
+<div class="particle"></div>
+<div class="particle"></div>
+</div>
+<div class="container hero-content">
+<div class="atom-visual">
+<div class="atom-dot"></div><div class="atom-dot"></div><div class="atom-dot"></div><div class="atom-dot"></div><div class="atom-dot"></div>
+</div>
+<h1>Descubre los elementos que <span>construyen nuestro universo</span></h1>
+<p>Explora los 118 elementos químicos con una experiencia interactiva diseñada para estudiantes, educadores y curiosos de la ciencia.</p>
+<a href="#elementos" class="btn btn-primary">Explorar elementos →</a>
+</div>
+</section>
+
+<section class="about" id="sobre">
+<div class="container">
+<h2><span>Sobre Nosotros</span></h2>
+<p class="section-desc">Nuestra misión es hacer la química accesible y fascinante para todos.</p>
+<div class="about-grid">
+<div class="about-text">
+<p>La tabla periódica es mucho más que un conjunto de símbolos y números. Es el mapa fundamental que organiza los bloques básicos de la materia: los elementos químicos. Desde el hidrógeno, el elemento más ligero del universo, hasta el oganesón, cada elemento cuenta una historia única sobre cómo está construido nuestro mundo.</p>
+<p>En <strong>Tabla Periódica</strong>, creemos que el conocimiento científico debe ser visual, interactivo y atractivo. Nuestra plataforma educativa transforma el estudio de la tabla periódica en una experiencia dinámica que despierta la curiosidad y facilita el aprendizaje.</p>
+</div>
+<div class="about-visual">
+<div class="about-card"><div class="num">118</div><div class="label">Elementos</div></div>
+<div class="about-card"><div class="num">7</div><div class="label">Periodos</div></div>
+<div class="about-card"><div class="num">18</div><div class="label">Grupos</div></div>
+<div class="about-card"><div class="num">10</div><div class="label">Categorías</div></div>
+</div>
+</div>
+</div>
+</section>
+
+<section id="caracteristicas">
+<div class="container">
+<h2><span>Características</span></h2>
+<p class="section-desc">Herramientas diseñadas para hacer del aprendizaje de la química una experiencia inolvidable.</p>
+<div class="features-grid">
+<div class="feature-card">
+<div class="feature-icon">⚛</div>
+<h3>Elementos interactivos</h3>
+<p>Cada elemento químico es un portal a información detallada. Pasa el cursor o haz clic para descubrir datos clave como masa atómica, grupo y período.</p>
+</div>
+<div class="feature-card">
+<div class="feature-icon">🧪</div>
+<h3>Categorías de elementos</h3>
+<p>Visualiza y comprende las 10 categorías de elementos, desde metales alcalinos hasta gases nobles, cada una con su propio código de color.</p>
+</div>
+<div class="feature-card">
+<div class="feature-icon">🔬</div>
+<h3>Información atómica</h3>
+<p>Accede a datos precisos de cada elemento: número atómico, masa, configuración electrónica y más, actualizados con fuentes oficiales.</p>
+</div>
+<div class="feature-card">
+<div class="feature-icon">📚</div>
+<h3>Recursos educativos</h3>
+<p>Contenido diseñado por educadores para facilitar la enseñanza de la química en todos los niveles educativos.</p>
+</div>
+</div>
+</div>
+</section>
+
+<section class="periodic" id="elementos">
+<div class="container">
+<h2><span>Tabla Periódica Completa</span></h2>
+<p class="section-desc">Los 118 elementos organizados según la clasificación oficial de la IUPAC.</p>
+<div class="legend" id="legend"></div>
+<div class="periodic-wrapper">
+<div class="ptable" id="ptable"></div>
+<div style="display:flex;gap:8px;align-items:center;margin-top:8px;margin-bottom:2px;padding-left:4px">
+<span class="row-label-span3"></span>
+<span class="row-label" style="color:var(--lanthanide)">Lantánidos</span>
+</div>
+<div class="lanthanide-row" id="lanthanides"></div>
+<div style="display:flex;gap:8px;align-items:center;margin-top:8px;margin-bottom:2px;padding-left:4px">
+<span class="row-label-span3"></span>
+<span class="row-label" style="color:var(--actinide)">Actínidos</span>
+</div>
+<div class="actinide-row" id="actinides"></div>
+</div>
+</div>
+</section>
+
+<section class="testimonials">
+<div class="container">
+<h2><span>Lo que dicen nuestros usuarios</span></h2>
+<p class="section-desc">Estudiantes y docentes comparten su experiencia con nuestra plataforma.</p>
+<div class="testimonials-grid">
+<div class="testimonial-card">
+<div class="stars">★★★★★</div>
+<blockquote>"Una herramienta increíble para enseñar química. Mis estudiantes pasaron de memorizar a realmente comprender la tabla periódica."</blockquote>
+<div class="author">
+<div class="avatar">M</div>
+<div class="author-info"><strong>María González</strong><span>Docente de Química, UNAM</span></div>
+</div>
+</div>
+<div class="testimonial-card">
+<div class="stars">★★★★★</div>
+<blockquote>"Siempre pensé que la tabla periódica era aburrida hasta que probé esta plataforma. La interactividad cambia todo."</blockquote>
+<div class="author">
+<div class="avatar">C</div>
+<div class="author-info"><strong>Carlos Mendoza</strong><span>Estudiante, Ingeniería Química</span></div>
+</div>
+</div>
+<div class="testimonial-card">
+<div class="stars">★★★★★</div>
+<blockquote>"La interfaz visual y los colores por categoría facilitan muchísimo el estudio. Lo recomiendo a todos mis compañeros."</blockquote>
+<div class="author">
+<div class="avatar">L</div>
+<div class="author-info"><strong>Laura Jiménez</strong><span>Estudiante, Bachillerato</span></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<section id="contacto">
+<div class="container">
+<h2><span>Contacto</span></h2>
+<p class="section-desc">¿Tienes preguntas, sugerencias o quieres colaborar con nosotros? Escríbenos.</p>
+<form class="contact-form" onsubmit="handleSubmit(event)">
+<div class="form-group">
+<label for="name">Nombre</label>
+<input type="text" id="name" placeholder="Tu nombre" required>
+</div>
+<div class="form-group">
+<label for="email">Email</label>
+<input type="email" id="email" placeholder="tu@email.com" required>
+</div>
+<div class="form-group">
+<label for="message">Mensaje</label>
+<textarea id="message" placeholder="Escribe tu mensaje aquí..." required></textarea>
+</div>
+<button type="submit" class="btn btn-primary btn-submit">Enviar mensaje</button>
+</form>
+</div>
+</section>
+
+<footer>
+<div class="container">
+<div class="footer-content">
+<div class="logo">
+<div class="logo-icon">
+<svg viewBox="0 0 100 100" fill="none">
+<ellipse cx="50" cy="50" rx="46" ry="18" stroke="url(#lg2)" stroke-width="2.5" opacity=".7"/>
+<ellipse cx="50" cy="50" rx="46" ry="18" stroke="url(#lg2)" stroke-width="2.5" opacity=".7" transform="rotate(60 50 50)"/>
+<ellipse cx="50" cy="50" rx="46" ry="18" stroke="url(#lg2)" stroke-width="2.5" opacity=".7" transform="rotate(-60 50 50)"/>
+<circle cx="50" cy="50" r="9" fill="url(#lg2)"/>
+<defs><linearGradient id="lg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#38bdf8"/><stop offset="1" stop-color="#6366f1"/></linearGradient></defs>
+</svg>
+</div>
+<span>Tabla Periódica</span>
+</div>
+<div class="footer-links">
+<a href="https://github.com" target="_blank" rel="noopener" aria-label="GitHub"><svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg></a>
+<a href="https://linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn"><svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+<a href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram"><svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
+<a href="https://twitter.com" target="_blank" rel="noopener" aria-label="Twitter / X"><svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+</div>
+</div>
+<div class="footer-bottom">
+<p>&copy; 2026 Tabla Periódica Interactiva. Todos los derechos reservados.</p>
+</div>
+</div>
+</footer>
+
+<script>
+const E=[
+[1,"H","Hidrógeno",1.008,1,1,"nonmetal","1s¹"],
+[2,"He","Helio",4.0026,18,1,"noble","1s²"],
+[3,"Li","Litio",6.94,1,2,"alkali","[He] 2s¹"],
+[4,"Be","Berilio",9.0122,2,2,"alkaline","[He] 2s²"],
+[5,"B","Boro",10.81,13,2,"metalloid","[He] 2s² 2p¹"],
+[6,"C","Carbono",12.011,14,2,"nonmetal","[He] 2s² 2p²"],
+[7,"N","Nitrógeno",14.007,15,2,"nonmetal","[He] 2s² 2p³"],
+[8,"O","Oxígeno",15.999,16,2,"nonmetal","[He] 2s² 2p⁴"],
+[9,"F","Flúor",18.998,17,2,"halogen","[He] 2s² 2p⁵"],
+[10,"Ne","Neón",20.18,18,2,"noble","[He] 2s² 2p⁶"],
+[11,"Na","Sodio",22.99,1,3,"alkali","[Ne] 3s¹"],
+[12,"Mg","Magnesio",24.305,2,3,"alkaline","[Ne] 3s²"],
+[13,"Al","Aluminio",26.982,13,3,"posttrans","[Ne] 3s² 3p¹"],
+[14,"Si","Silicio",28.085,14,3,"metalloid","[Ne] 3s² 3p²"],
+[15,"P","Fósforo",30.974,15,3,"nonmetal","[Ne] 3s² 3p³"],
+[16,"S","Azufre",32.06,16,3,"nonmetal","[Ne] 3s² 3p⁴"],
+[17,"Cl","Cloro",35.45,17,3,"halogen","[Ne] 3s² 3p⁵"],
+[18,"Ar","Argón",39.948,18,3,"noble","[Ne] 3s² 3p⁶"],
+[19,"K","Potasio",39.098,1,4,"alkali","[Ar] 4s¹"],
+[20,"Ca","Calcio",40.078,2,4,"alkaline","[Ar] 4s²"],
+[21,"Sc","Escandio",44.956,3,4,"transition","[Ar] 3d¹ 4s²"],
+[22,"Ti","Titanio",47.867,4,4,"transition","[Ar] 3d² 4s²"],
+[23,"V","Vanadio",50.942,5,4,"transition","[Ar] 3d³ 4s²"],
+[24,"Cr","Cromo",51.996,6,4,"transition","[Ar] 3d⁵ 4s¹"],
+[25,"Mn","Manganeso",54.938,7,4,"transition","[Ar] 3d⁵ 4s²"],
+[26,"Fe","Hierro",55.845,8,4,"transition","[Ar] 3d⁶ 4s²"],
+[27,"Co","Cobalto",58.933,9,4,"transition","[Ar] 3d⁷ 4s²"],
+[28,"Ni","Níquel",58.693,10,4,"transition","[Ar] 3d⁸ 4s²"],
+[29,"Cu","Cobre",63.546,11,4,"transition","[Ar] 3d¹⁰ 4s¹"],
+[30,"Zn","Zinc",65.38,12,4,"transition","[Ar] 3d¹⁰ 4s²"],
+[31,"Ga","Galio",69.723,13,4,"posttrans","[Ar] 3d¹⁰ 4s² 4p¹"],
+[32,"Ge","Germanio",72.63,14,4,"metalloid","[Ar] 3d¹⁰ 4s² 4p²"],
+[33,"As","Arsénico",74.922,15,4,"metalloid","[Ar] 3d¹⁰ 4s² 4p³"],
+[34,"Se","Selenio",78.971,16,4,"nonmetal","[Ar] 3d¹⁰ 4s² 4p⁴"],
+[35,"Br","Bromo",79.904,17,4,"halogen","[Ar] 3d¹⁰ 4s² 4p⁵"],
+[36,"Kr","Kriptón",83.798,18,4,"noble","[Ar] 3d¹⁰ 4s² 4p⁶"],
+[37,"Rb","Rubidio",85.468,1,5,"alkali","[Kr] 5s¹"],
+[38,"Sr","Estroncio",87.62,2,5,"alkaline","[Kr] 5s²"],
+[39,"Y","Itrio",88.906,3,5,"transition","[Kr] 4d¹ 5s²"],
+[40,"Zr","Circonio",91.224,4,5,"transition","[Kr] 4d² 5s²"],
+[41,"Nb","Niobio",92.906,5,5,"transition","[Kr] 4d⁴ 5s¹"],
+[42,"Mo","Molibdeno",95.95,6,5,"transition","[Kr] 4d⁵ 5s¹"],
+[43,"Tc","Tecnecio",98,7,5,"transition","[Kr] 4d⁵ 5s²"],
+[44,"Ru","Rutenio",101.07,8,5,"transition","[Kr] 4d⁷ 5s¹"],
+[45,"Rh","Rodio",102.91,9,5,"transition","[Kr] 4d⁸ 5s¹"],
+[46,"Pd","Paladio",106.42,10,5,"transition","[Kr] 4d¹⁰"],
+[47,"Ag","Plata",107.87,11,5,"transition","[Kr] 4d¹⁰ 5s¹"],
+[48,"Cd","Cadmio",112.41,12,5,"transition","[Kr] 4d¹⁰ 5s²"],
+[49,"In","Indio",114.82,13,5,"posttrans","[Kr] 4d¹⁰ 5s² 5p¹"],
+[50,"Sn","Estaño",118.71,14,5,"posttrans","[Kr] 4d¹⁰ 5s² 5p²"],
+[51,"Sb","Antimonio",121.76,15,5,"metalloid","[Kr] 4d¹⁰ 5s² 5p³"],
+[52,"Te","Telurio",127.6,16,5,"metalloid","[Kr] 4d¹⁰ 5s² 5p⁴"],
+[53,"I","Yodo",126.9,17,5,"halogen","[Kr] 4d¹⁰ 5s² 5p⁵"],
+[54,"Xe","Xenón",131.29,18,5,"noble","[Kr] 4d¹⁰ 5s² 5p⁶"],
+[55,"Cs","Cesio",132.91,1,6,"alkali","[Xe] 6s¹"],
+[56,"Ba","Bario",137.33,2,6,"alkaline","[Xe] 6s²"],
+[57,"La","Lantano",138.91,3,6,"lanthanide","[Xe] 5d¹ 6s²"],
+[58,"Ce","Cerio",140.12,3,6,"lanthanide","[Xe] 4f¹ 5d¹ 6s²"],
+[59,"Pr","Praseodimio",140.91,3,6,"lanthanide","[Xe] 4f³ 6s²"],
+[60,"Nd","Neodimio",144.24,3,6,"lanthanide","[Xe] 4f⁴ 6s²"],
+[61,"Pm","Prometio",145,3,6,"lanthanide","[Xe] 4f⁵ 6s²"],
+[62,"Sm","Samario",150.36,3,6,"lanthanide","[Xe] 4f⁶ 6s²"],
+[63,"Eu","Europio",151.96,3,6,"lanthanide","[Xe] 4f⁷ 6s²"],
+[64,"Gd","Gadolinio",157.25,3,6,"lanthanide","[Xe] 4f⁷ 5d¹ 6s²"],
+[65,"Tb","Terbio",158.93,3,6,"lanthanide","[Xe] 4f⁹ 6s²"],
+[66,"Dy","Disprosio",162.5,3,6,"lanthanide","[Xe] 4f¹⁰ 6s²"],
+[67,"Ho","Holmio",164.93,3,6,"lanthanide","[Xe] 4f¹¹ 6s²"],
+[68,"Er","Erbio",167.26,3,6,"lanthanide","[Xe] 4f¹² 6s²"],
+[69,"Tm","Tulio",168.93,3,6,"lanthanide","[Xe] 4f¹³ 6s²"],
+[70,"Yb","Iterbio",173.05,3,6,"lanthanide","[Xe] 4f¹⁴ 6s²"],
+[71,"Lu","Lutecio",174.97,3,6,"lanthanide","[Xe] 4f¹⁴ 5d¹ 6s²"],
+[72,"Hf","Hafnio",178.49,4,6,"transition","[Xe] 4f¹⁴ 5d² 6s²"],
+[73,"Ta","Tántalo",180.95,5,6,"transition","[Xe] 4f¹⁴ 5d³ 6s²"],
+[74,"W","Wolframio",183.84,6,6,"transition","[Xe] 4f¹⁴ 5d⁴ 6s²"],
+[75,"Re","Renio",186.21,7,6,"transition","[Xe] 4f¹⁴ 5d⁵ 6s²"],
+[76,"Os","Osmio",190.23,8,6,"transition","[Xe] 4f¹⁴ 5d⁶ 6s²"],
+[77,"Ir","Iridio",192.22,9,6,"transition","[Xe] 4f¹⁴ 5d⁷ 6s²"],
+[78,"Pt","Platino",195.08,10,6,"transition","[Xe] 4f¹⁴ 5d⁹ 6s¹"],
+[79,"Au","Oro",196.97,11,6,"transition","[Xe] 4f¹⁴ 5d¹⁰ 6s¹"],
+[80,"Hg","Mercurio",200.59,12,6,"transition","[Xe] 4f¹⁴ 5d¹⁰ 6s²"],
+[81,"Tl","Talio",204.38,13,6,"posttrans","[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p¹"],
+[82,"Pb","Plomo",207.2,14,6,"posttrans","[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p²"],
+[83,"Bi","Bismuto",208.98,15,6,"posttrans","[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p³"],
+[84,"Po","Polonio",209,16,6,"posttrans","[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p⁴"],
+[85,"At","Ástato",210,17,6,"halogen","[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p⁵"],
+[86,"Rn","Radón",222,18,6,"noble","[Xe] 4f¹⁴ 5d¹⁰ 6s² 6p⁶"],
+[87,"Fr","Francio",223,1,7,"alkali","[Rn] 7s¹"],
+[88,"Ra","Radio",226,2,7,"alkaline","[Rn] 7s²"],
+[89,"Ac","Actinio",227,3,7,"actinide","[Rn] 6d¹ 7s²"],
+[90,"Th","Torio",232.04,3,7,"actinide","[Rn] 6d² 7s²"],
+[91,"Pa","Protactinio",231.04,3,7,"actinide","[Rn] 5f² 6d¹ 7s²"],
+[92,"U","Uranio",238.03,3,7,"actinide","[Rn] 5f³ 6d¹ 7s²"],
+[93,"Np","Neptunio",237,3,7,"actinide","[Rn] 5f⁴ 6d¹ 7s²"],
+[94,"Pu","Plutonio",244,3,7,"actinide","[Rn] 5f⁶ 7s²"],
+[95,"Am","Americio",243,3,7,"actinide","[Rn] 5f⁷ 7s²"],
+[96,"Cm","Curio",247,3,7,"actinide","[Rn] 5f⁷ 6d¹ 7s²"],
+[97,"Bk","Berkelio",247,3,7,"actinide","[Rn] 5f⁹ 7s²"],
+[98,"Cf","Californio",251,3,7,"actinide","[Rn] 5f¹⁰ 7s²"],
+[99,"Es","Einstenio",252,3,7,"actinide","[Rn] 5f¹¹ 7s²"],
+[100,"Fm","Fermio",257,3,7,"actinide","[Rn] 5f¹² 7s²"],
+[101,"Md","Mendelevio",258,3,7,"actinide","[Rn] 5f¹³ 7s²"],
+[102,"No","Nobelio",259,3,7,"actinide","[Rn] 5f¹⁴ 7s²"],
+[103,"Lr","Lawrencio",262,3,7,"actinide","[Rn] 5f¹⁴ 7s² 7p¹"],
+[104,"Rf","Rutherfordio",267,4,7,"transition","[Rn] 5f¹⁴ 6d² 7s²"],
+[105,"Db","Dubnio",268,5,7,"transition","[Rn] 5f¹⁴ 6d³ 7s²"],
+[106,"Sg","Seaborgio",269,6,7,"transition","[Rn] 5f¹⁴ 6d⁴ 7s²"],
+[107,"Bh","Bohrio",270,7,7,"transition","[Rn] 5f¹⁴ 6d⁵ 7s²"],
+[108,"Hs","Hasio",277,8,7,"transition","[Rn] 5f¹⁴ 6d⁶ 7s²"],
+[109,"Mt","Meitnerio",278,9,7,"transition","[Rn] 5f¹⁴ 6d⁷ 7s²"],
+[110,"Ds","Darmstatio",281,10,7,"transition","[Rn] 5f¹⁴ 6d⁸ 7s²"],
+[111,"Rg","Roentgenio",282,11,7,"transition","[Rn] 5f¹⁴ 6d¹⁰ 7s¹"],
+[112,"Cn","Copernicio",285,12,7,"transition","[Rn] 5f¹⁴ 6d¹⁰ 7s²"],
+[113,"Nh","Nihonio",286,13,7,"posttrans","[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p¹"],
+[114,"Fl","Flerovio",289,14,7,"posttrans","[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p²"],
+[115,"Mc","Moscovio",290,15,7,"posttrans","[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p³"],
+[116,"Lv","Livermorio",293,16,7,"posttrans","[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p⁴"],
+[117,"Ts","Teneso",294,17,7,"halogen","[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p⁵"],
+[118,"Og","Oganesón",294,18,7,"noble","[Rn] 5f¹⁴ 6d¹⁰ 7s² 7p⁶"]
+];
+
+const catNames={
+nonmetal:"No metal",noble:"Gas noble",alkali:"Metal alcalino",
+alkaline:"Metal alcalinotérreo",transition:"Metal de transición",
+posttrans:"Metal post-transición",metalloid:"Metaloide",
+halogen:"Halógeno",lanthanide:"Lantánido",actinide:"Actínido"
+};
+
+const catColors={
+nonmetal:"#38bdf8",noble:"#a78bfa",alkali:"#f97316",
+alkaline:"#eab308",transition:"#6366f1",posttrans:"#10b981",
+metalloid:"#14b8a6",halogen:"#f472b6",lanthanide:"#8b5cf6",actinide:"#ec4899"
+};
+
+function createElement(data){
+const el=document.createElement('div');
+el.className='element category-'+data[6];
+el.style.gridColumn=data[4];
+el.style.gridRow=data[5];
+const mass=typeof data[3]==='number'?data[3].toFixed(data[3]<100?2:1):data[3];
+el.innerHTML=
+'<div class="atomic">'+data[0]+'</div>'+
+'<div class="symbol">'+data[1]+'</div>'+
+'<div class="name">'+data[2]+'</div>'+
+'<div class="tooltip">'+
+'<strong>'+data[2]+' ('+data[1]+')</strong>'+
+'<span>Masa: '+mass+' u</span>'+
+'<span>Grupo: '+data[4]+' · Período: '+data[5]+'</span>'+
+'<span>Categoría: '+catNames[data[6]]+'</span>'+
+'<span>Config: '+data[7]+'</span>'+
+'</div>';
+return el;
+}
+
+function renderTable(){
+const main=document.getElementById('ptable');
+const lanth=document.getElementById('lanthanides');
+const actin=document.getElementById('actinides');
+const legend=document.getElementById('legend');
+main.innerHTML='';lanth.innerHTML='';actin.innerHTML='';
+
+const perMap={};
+E.forEach(e=>{
+if(e[6]==='lanthanide'||e[6]==='actinide')return;
+if(!perMap[e[5]])perMap[e[5]]=[];
+perMap[e[5]].push(e);
+});
+
+for(let row=1;row<=7;row++){
+const els=perMap[row]||[];
+const cells=[];
+for(let c=1;c<=18;c++)cells[c]=null;
+els.forEach(e=>{cells[e[4]]=e;});
+for(let c=1;c<=18;c++){
+if(cells[c]){
+main.appendChild(createElement(cells[c]));
+}else{
+const empty=document.createElement('div');
+empty.className='empty-cell';
+empty.style.gridColumn=c;
+empty.style.gridRow=row;
+main.appendChild(empty);
+}
+}
+}
+
+function fillRow(container,startIdx,offsetCol){
+const data=Array(18).fill(null);
+for(let i=0;i<15;i++){
+const col=offsetCol+i;
+data[col-1]=E[startIdx+i];
+}
+for(let c=1;c<=18;c++){
+if(data[c-1]){
+const e=[...data[c-1]];
+e[4]=c;
+e[5]=1;
+container.appendChild(createElement(e));
+}else{
+const empty=document.createElement('div');
+empty.className='empty-cell';
+empty.style.gridColumn=c;
+empty.style.gridRow=1;
+container.appendChild(empty);
+}
+}
+}
+fillRow(lanth,56,3);
+fillRow(actin,88,3);
+
+Object.entries(catNames).forEach(([key,name])=>{
+const item=document.createElement('div');
+item.className='legend-item';
+item.innerHTML='<span class="legend-color" style="background:'+catColors[key]+'"></span>'+name;
+legend.appendChild(item);
+});
+}
+
+function toggleMenu(){
+document.getElementById('nav').classList.toggle('open');
+document.querySelector('.menu-toggle').classList.toggle('open');
+}
+function closeMenu(){
+document.getElementById('nav').classList.remove('open');
+document.querySelector('.menu-toggle').classList.remove('open');
+}
+function handleSubmit(e){
+e.preventDefault();
+const btn=e.target.querySelector('button');
+btn.textContent='¡Mensaje enviado!';
+btn.style.background='linear-gradient(135deg,#10b981,#059669)';
+setTimeout(function(){
+btn.textContent='Enviar mensaje';
+btn.style.background='';
+e.target.reset();
+},3000);
+}
+
+document.addEventListener('DOMContentLoaded',renderTable);
+</script>
+</body>
+</html>
