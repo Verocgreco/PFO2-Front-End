@@ -43,7 +43,7 @@ Ambos generaron una Landing Page basada en el mismo prompt inicial.
 El siguiente es el prompt exacto utilizado para ambos agentes:
 
 Actúa como un desarrollador Senior Front-End y diseñador UI/UX experto. 
-Objetivo principal
+**Objetivo principal**
 Generar una Landing Page completa llamada: "Tabla periódica" 
 La página debe representar una experiencia educativa moderna centrada en la Tabla Periódica y los elementos químicos.
 REQUISITO CRÍTICO DE SALIDA
@@ -56,21 +56,41 @@ Utilizar una paleta de colores inspirada en ciencia y tecnología.
 
 Secciones obligatorias 
 1. Header Incluir: Logo con texto: "Tabla periódica" Menú de navegación responsive 
-Opciones: Inicio Sobre Nosotros Elementos Características Contacto 
+Opciones: 
+-Inicio 
+-Sobre Nosotros 
+-Elementos 
+-Características 
+-Contacto 
 2. Hero Section Debe incluir: Título principal: "Descubre los elementos que construyen nuestro universo" 
 Texto descriptivo breve. Botón CTA: "Explorar elementos" Agregar elementos visuales relacionados con ciencia o química.
 3. Sección Sobre Nosotros Incluir: Breve explicación sobre química y la importancia de la tabla periódica 
 Objetivo educativo de la plataforma 
-4. Sección de Características Crear 4 tarjetas: Elementos interactivos Categorías de elementos Información atómica 
-Recursos educativos. Cada tarjeta debe contener: Ícono Título Descripción 
+4. Sección de Características Crear 4 tarjetas: 
+-Elementos interactivos 
+-Categorías de elementos 
+-Información atómica 
+-Recursos educativos.
+ Cada tarjeta debe contener: Ícono Título Descripción 
 5. Tabla Periódica Completa. Crear una representación visual completa de la tabla periódica con los 118 elementos químicos oficiales. 
 Requisitos: * Incluir todos los elementos desde Hidrógeno (H) hasta Oganesón (Og). * Cada elemento debe mostrar:
-* Número atómico * Símbolo * Nombre * Organizar los elementos respetando la estructura real de la tabla periódica. 
-*Diferenciar visualmente las categorías mediante colores distintos. Categorías sugeridas: * Metales alcalinos
-* Metales alcalinotérreos * Metales de transición * Metales post-transición * Metaloides * No metales * Halógenos 
-* Gases nobles * Lantánidos * Actínidos 
+-Número atómico  
+-Símbolo  
+-Nombre  
+Organizar los elementos respetando la estructura real de la tabla periódica. 
+*Diferenciar visualmente las categorías mediante colores distintos. Categorías sugeridas: 
+-Metales alcalinos
+-Metales alcalinotérreos
+-Metales de transición
+-Metales post-transición 
+-Metaloides 
+-No metales  
+-Halógenos 
+-Gases nobles 
+-Lantánidos 
+-Actínidos 
 Agregar interactividad mediante JavaScript: * Efecto hover sobre elementos * Mostrar información adicional al pasar el cursor o hacer clic: * Masa atómica * Grupo * Período * Categoría 
-6. Testimonios Generar 3 testimonios ficticios de estudiantes o docentes. 
+6. Testimonios: Generar 3 testimonios ficticios de estudiantes o docentes. 
 7. Formulario de contacto Incluir: Nombre Email Mensaje Botón enviar No requiere backend. 
 8. Footer Incluir enlaces visuales a: GitHub (ícono) LinkedIn (ícono) Instagram (ícono) Twitter/X (ícono) 
 
